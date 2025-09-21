@@ -9,7 +9,7 @@
 #define MyIcon "icon.ico"   ; optional: remove if you don't have an icon
 
 [Setup]
-AppId={{3B3A9C9E-1A6E-4D3F-AB3B-AB5A2C1C1D9B}
+AppId={{3B3A9C9E-1A6E-4D3F-AB3B-AB5A2C1C1D9B}}   ; <-- fixed: balanced double braces
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
@@ -55,6 +55,19 @@ begin
   Result := Trim(s) = '';
 end;
 
+// ---- NEW: proper JSON escaper (quotes, backslashes, newlines)
+function JsonEscape(const S: string): string;
+var
+  T: string;
+begin
+  T := S;
+  StringChangeEx(T, '\', '\\', True);   // escape backslashes first
+  StringChangeEx(T, '"', '\"', True);   // then quotes
+  StringChangeEx(T, #13#10, '\n', True);
+  StringChangeEx(T, #10, '\n', True);
+  Result := T;
+end;
+
 procedure InitializeWizard;
 var
   LabelCID, LabelCS, LabelURI: TLabel;
@@ -77,13 +90,12 @@ begin
   Instructions.WordWrap := True;
   Instructions.Lines.Text :=
     'You need a Spotify Developer app to get a Client ID and Client Secret:' + #13#10#13#10 +
-    '1. Go to https://developer.spotify.com/dashboard and log in with your Spotify account.' + #13#10 +
-    '2. Click **Create App**.' + #13#10 +
-    '3. Give it a name (e.g. Spotify Alarm) and description.' + #13#10 +
-    '4. In "Redirect URIs" add this exactly: http://127.0.0.1:8080/callback' + #13#10 +
-    '5. Save and then click **Settings** to reveal your **Client ID** and **Client Secret**.' + #13#10 +
-    '6. Copy those values into the fields below.' + #13#10 +
-    'The Default Spotify URI is optional (e.g. spotify:playlist:37i9dQZF1DXcBWIGoYBM5M).';
+    '1) Go to https://developer.spotify.com/dashboard and log in with your Spotify account.' + #13#10 +
+    '2) Click Create App.' + #13#10 +
+    '3) Give it a name (e.g. Spotify Alarm) and description.' + #13#10 +
+    '4) In "Redirect URIs" add this exactly: http://127.0.0.1:8080/callback' + #13#10 +
+    '5) Save, then open Settings to see your Client ID and Client Secret.' + #13#10 +
+    '6) Copy those values below. The Default Spotify URI is optional (e.g. spotify:playlist:37i9dQZF1DXcBWIGoYBM5M).';
 
   { --- Client ID field ---------------------------------------------------- }
   LabelCID := TLabel.Create(WizardForm);
@@ -152,9 +164,9 @@ begin
 
     Json :=
       '{' + #13#10 +
-      '  "client_id": "' + StringChange(EdClientID.Text, '"', '\"') + '",' + #13#10 +
-      '  "client_secret": "' + StringChange(EdClientSecret.Text, '"', '\"') + '",' + #13#10 +
-      '  "default_uri": "' + StringChange(EdDefaultURI.Text, '"', '\"') + '"' + #13#10 +
+      '  "client_id": "' + JsonEscape(EdClientID.Text) + '",' + #13#10 +
+      '  "client_secret": "' + JsonEscape(EdClientSecret.Text) + '",' + #13#10 +
+      '  "default_uri": "' + JsonEscape(EdDefaultURI.Text) + '"' + #13#10 +
       '}';
 
     SaveStringToFile(ConfigPath, Json, False);
