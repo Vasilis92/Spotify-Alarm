@@ -1,10 +1,5 @@
-.venv
-build
-dist
-icon.ico
 /dist/
 /build/
 /output/
 *.exe
 *.msi
-*.spec
