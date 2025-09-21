@@ -1,5 +1,9 @@
 /dist/
 /build/
-/output/
 *.exe
 *.msi
+.venv
+build
+dist
+SpotifyAlarm.spec
+icon.ico
