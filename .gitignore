@@ -3,3 +3,8 @@ build
 dist
 SpotifyAlarm.spec
 icon.ico
+/dist/
+/build/
+/output/
+*.exe
+*.msi
