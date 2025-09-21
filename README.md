@@ -62,3 +62,9 @@ PowerShell example:
 
 ```powershell
 Get-FileHash .\SpotifyAlarmSetup_x.y.z.exe -Algorithm SHA256
+```
+
+## License
+
+See [LICENSE](LICENSE) for full terms.  
+This project is distributed as compiled binaries only.
