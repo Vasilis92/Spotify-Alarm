@@ -2,8 +2,8 @@
 
 A beautiful desktop alarm that plays your chosen **Spotify** playlist, album, or track at scheduled times.
 
-> 👉 **[Download the latest Windows installer](../../releases/latest)**  
-> (No source code required—just run the installer.)
+[⬇️ Download the latest Windows Installer](https://github.com/Vasilis92/Spotify-Alarm/releases/latest/download/SpotifyAlarmSetup.exe)
+The installer includes everything you need — no source code required.
 
 ---
 
