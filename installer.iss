@@ -21,7 +21,7 @@ Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
 ArchitecturesInstallIn64BitMode=x64
-PrivilegesRequired=lowest
+PrivilegesRequired=admin
 SetupIconFile={#MyIcon}
 UninstallDisplayIcon={app}\{#MyAppExeName}
 
