@@ -3,13 +3,13 @@
 ; =========================================================
 
 #define MyAppName "Spotify Alarm"
-#define MyAppVersion "1.0.0"
-#define MyAppPublisher "Vasilis"
+#define MyAppVersion "1.1.0"           ; bump so you can see the new build
+#define MyAppPublisher "@mt_rdtard"
 #define MyAppExeName "SpotifyAlarm.exe"
-#define MyIcon "icon.ico"   ; optional: remove if you don't have an icon
+#define MyIcon "icon.ico"
 
 [Setup]
-AppId={{3B3A9C9E-1A6E-4D3F-AB3B-AB5A2C1C1D9B}}   ; <-- fixed: balanced double braces
+AppId={{3B3A9C9E-1A6E-4D3F-AB3B-AB5A2C1C1D9B}}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
@@ -26,7 +26,10 @@ SetupIconFile={#MyIcon}
 UninstallDisplayIcon={app}\{#MyAppExeName}
 
 [Files]
-Source: "dist\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+; Always take the freshly built exe next to this .iss file
+Source: "{#SourcePath}\dist\SpotifyAlarm.exe"; DestDir: "{app}"; Flags: ignoreversion
+; (optional) copy the icon into the app folder as well
+; Source: "{#SourcePath}\{#MyIcon}"; DestDir: "{app}"
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
@@ -55,14 +58,13 @@ begin
   Result := Trim(s) = '';
 end;
 
-// ---- NEW: proper JSON escaper (quotes, backslashes, newlines)
 function JsonEscape(const S: string): string;
 var
   T: string;
 begin
   T := S;
-  StringChangeEx(T, '\', '\\', True);   // escape backslashes first
-  StringChangeEx(T, '"', '\"', True);   // then quotes
+  StringChangeEx(T, '\', '\\', True);
+  StringChangeEx(T, '"', '\"', True);
   StringChangeEx(T, #13#10, '\n', True);
   StringChangeEx(T, #10, '\n', True);
   Result := T;
@@ -78,7 +80,6 @@ begin
     'Provide your Spotify app credentials and optional default playlist URI.'
   );
 
-  { --- Instructions box --------------------------------------------------- }
   Instructions := TNewMemo.Create(WizardForm);
   Instructions.Parent := CredPage.Surface;
   Instructions.Left := ScaleX(0);
@@ -90,14 +91,13 @@ begin
   Instructions.WordWrap := True;
   Instructions.Lines.Text :=
     'You need a Spotify Developer app to get a Client ID and Client Secret:' + #13#10#13#10 +
-    '1) Go to https://developer.spotify.com/dashboard and log in with your Spotify account.' + #13#10 +
+    '1) Go to https://developer.spotify.com/dashboard and log in.' + #13#10 +
     '2) Click Create App.' + #13#10 +
     '3) Give it a name (e.g. Spotify Alarm) and description.' + #13#10 +
-    '4) In "Redirect URIs" add this exactly: http://127.0.0.1:8080/callback' + #13#10 +
-    '5) Save, then open Settings to see your Client ID and Client Secret.' + #13#10 +
-    '6) Copy those values below. The Default Spotify URI is optional (e.g. spotify:playlist:37i9dQZF1DXcBWIGoYBM5M).';
+    '4) In "Redirect URIs" add: http://127.0.0.1:8080/callback' + #13#10 +
+    '5) Save, open Settings, copy Client ID and Client Secret.' + #13#10 +
+    '6) Paste them below. Default Spotify URI is optional.';
 
-  { --- Client ID field ---------------------------------------------------- }
   LabelCID := TLabel.Create(WizardForm);
   LabelCID.Parent := CredPage.Surface;
   LabelCID.Caption := 'Client ID:';
@@ -108,7 +108,6 @@ begin
   EdClientID.Top := LabelCID.Top + ScaleY(16);
   EdClientID.Width := ScaleX(420);
 
-  { --- Client Secret field ------------------------------------------------ }
   LabelCS := TLabel.Create(WizardForm);
   LabelCS.Parent := CredPage.Surface;
   LabelCS.Caption := 'Client Secret:';
@@ -120,7 +119,6 @@ begin
   EdClientSecret.Width := ScaleX(420);
   EdClientSecret.PasswordChar := '*';
 
-  { --- Default URI field (optional) --------------------------------------- }
   LabelURI := TLabel.Create(WizardForm);
   LabelURI.Parent := CredPage.Surface;
   LabelURI.Caption := 'Default Spotify URI (optional):';
